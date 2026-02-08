@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Block Survival (Web)</title>
+  <style>
+    html, body { margin:0; padding:0; background:#111; overflow:hidden; touch-action:none; }
+    canvas { display:block; width:100vw; height:100vh; background:#14141e; }
+
+    /* UI buttons */
+    .ui {
+      position: fixed; left:0; top:0; right:0; bottom:0;
+      pointer-events:none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: white;
+    }
+    .btn {
+      position:absolute; pointer-events:auto;
+      background: rgba(40,40,55,.75);
+      border: 2px solid rgba(0,0,0,.85);
+      border-radius: 14px;
+      user-select:none;
+      -webkit-user-select:none;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700;
+    }
+    .hud {
+      position:absolute; left:12px; top:10px;
+      font-size:14px; opacity:.95;
+      text-shadow:0 2px 0 rgba(0,0,0,.6);
+      pointer-events:none;
+    }
+    .bar {
+      width:220px; height:14px; border-radius:8px;
+      background:#222; border:2px solid #000; overflow:hidden;
+      margin-bottom:6px;
+    }
+    .bar > div { height:100%; }
+    .hotbar {
+      position:absolute; left:12px; bottom:12px;
+      display:flex; gap:10px; pointer-events:none;
+    }
+    .slot {
+      width:52px; height:40px; border-radius:10px;
+      background: rgba(40,40,55,.75);
+      border:2px solid #000;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px;
+    }
+    .slot.sel { outline:3px solid #e6e65a; }
+    .panel {
+      position:absolute; left:50%; top:50%;
+      transform: translate(-50%,-50%);
+      width:min(92vw, 760px);
+      background: rgba(20,20,28,.95);
+      border: 2px solid #000;
+      border-radius: 14px;
+      padding: 12px;
+      display:none;
+      pointer-events:auto;
+    }
+    .panel h2 { margin:6px 0 10px; font-size:20px; }
+    .tabs { display:flex; gap:10px; margin-bottom:10px; }
+    .tab {
+      padding:8px 12px; border-radius:10px;
+      border:2px solid #000;
+      background: rgba(40,40,55,.75);
+      cursor:pointer;
+    }
+    .tab.active { outline:3px solid #e6e65a; }
+    .grid { display:grid; grid-template-columns: repeat(6, 1fr); gap:10px; }
+    .cell {
+      height:54px; border-radius:12px;
+      border:2px solid #000;
+      background: rgba(40,40,55,.75);
+      display:flex; align-items:center; justify-content:center;
+      flex-direction:column;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .cell.sel { outline:3px solid #e6e65a; }
+    .row { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
+    .action {
+      padding:10px 14px; border-radius:12px;
+      border:2px solid #000;
+      background: rgba(60,80,110,.75);
+      cursor:pointer;
+      font-weight:700;
+      user-select:none;
+    }
+    .hint {
+      margin-top:8px; opacity:.85; font-size:12px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+
+  <div class="ui">
+    <div class="hud">
+      <div class="bar"><div id="hpFill" style="width:100%; background:#dc4646;"></div></div>
+      <div class="bar"><div id="hunFill" style="width:100%; background:#e0b44a;"></div></div>
+      <div id="hudText"></div>
+    </div>
+
+    <div class="hotbar" id="hotbar"></div>
+
+    <!-- Touch controls -->
+    <div class="btn" id="btnJump" style="right:16px; bottom:190px; width:140px; height:140px;">JUMP</div>
+    <div class="btn" id="btnUse"  style="right:166px; bottom:16px; width:140px; height:110px;">USE</div>
+    <div class="btn" id="btnHit"  style="right:16px; bottom:16px; width:140px; height:110px;">HIT</div>
+    <div class="btn" id="btnInv"  style="right:16px; top:10px; width:140px; height:52px;">INV</div>
+
+    <!-- Inventory panel -->
+    <div class="panel" id="invPanel">
+      <h2>INVENTORY</h2>
+      <div class="tabs">
+        <div class="tab active" id="tabCraft">CRAFT</div>
+        <div class="tab" id="tabSmelt">ЖАРКА</div>
+        <div class="tab" id="tabClose">CLOSE</div>
+      </div>
+      <div class="grid" id="invGrid"></div>
+
+      <div class="row" id="craftRow"></div>
+
+      <div id="smeltBox" style="display:none;">
+        <div id="smeltStatus"></div>
+        <div class="row">
+          <div class="action" id="btnLoad">LOAD INPUT</div>
+          <div class="action" id="btnFuel">ADD FUEL</div>
+          <div class="action" id="btnTake">TAKE OUTPUT</div>
+        </div>
+        <div class="hint">Выбери предмет в инвентаре кликом, потом кнопки.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
