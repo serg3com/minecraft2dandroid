@@ -333,6 +333,8 @@
   const btnUse  = document.getElementById("btnUse");
   const btnHit  = document.getElementById("btnHit");
   const btnInv  = document.getElementById("btnInv");
+  const btnLeft  = document.getElementById("btnLeft");
+  const btnRight = document.getElementById("btnRight");
 
   const invPanel = document.getElementById("invPanel");
   const invGrid  = document.getElementById("invGrid");
@@ -351,6 +353,8 @@
   let jumpDown=false;
   let useTap=false;
   let hitDown=false;
+  let leftDown =false;
+  let rightDown =false;
 
   // aiming point (where to interact)
   let aimX = () => W/2;
@@ -378,6 +382,14 @@
 
   btnJump.addEventListener("pointerdown", (e)=>{ e.preventDefault(); jumpDown=true; });
   btnJump.addEventListener("pointerup", (e)=>{ e.preventDefault(); jumpDown=false; });
+
+  btnLeft.addEventListener("pointerdown", e => { e.preventDefault(); leftDown = true; });
+  btnLeft.addEventListener("pointerup",   e => { e.preventDefault(); leftDown = false; });
+  btnLeft.addEventListener("pointerleave",e => { leftDown = false; });
+
+  btnRight.addEventListener("pointerdown", e => { e.preventDefault(); rightDown = true; });
+  btnRight.addEventListener("pointerup",   e => { e.preventDefault(); rightDown = false; });
+  btnRight.addEventListener("pointerleave",e => { rightDown = false; });
 
   btnUse.addEventListener("pointerdown", (e)=>{ e.preventDefault(); useTap=true; });
   btnHit.addEventListener("pointerdown", (e)=>{ e.preventDefault(); hitDown=true; });
@@ -665,9 +677,13 @@
     const uiBlocked = invOpen; // for MVP
     let move = 0;
 
-    // keyboard fallback
-    if(keys.has("a")||keys.has("arrowleft")) move -= 1;
-    if(keys.has("d")||keys.has("arrowright")) move += 1;
+     // ПК
+    if (keys.has("a") || keys.has("arrowleft"))  move -= 1;
+    if (keys.has("d") || keys.has("arrowright")) move += 1;
+
+     // ТЕЛЕФОН
+    if (leftDown)  move -= 1;
+    if (rightDown) move += 1;
 
     let speed = keys.has("shift") ? RUN_SPEED : MOVE_SPEED;
 
